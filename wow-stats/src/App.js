@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Test React App for WoW Stats
+          Test React App for WoW Stats.
         </p>
       </header>
     </div>
