@@ -1,16 +1,18 @@
-name: Deploy App to GitHub-Pages
+name: Deploy App to GitHub Pages
 
 on:
-  push: # run the workflow when new commits are pushed.
+  push:
     branches:
-      - main  # only run when main branch is updated.
+      - main   # run when pushing to main
+  workflow_dispatch:   # allows manual trigger from Actions tab
 
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3 # pulls your repo’s code into the temporary server.
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
