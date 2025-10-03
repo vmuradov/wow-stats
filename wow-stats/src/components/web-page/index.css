@@ -1,0 +1,40 @@
+.simple-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.simple-table th,
+.simple-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.simple-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.simple-table tr:nth-child(even) {
+  /* background-color: #fafafa; */
+}
+
+.simple-table tr:hover {
+  /* background-color: #f1f1f1; */
+}
+
+td {
+  img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Global page background so the whole site appears gray */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #e6e6e6; /* light gray */
+}

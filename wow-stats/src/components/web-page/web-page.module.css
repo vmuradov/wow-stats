@@ -1,0 +1,19 @@
+.fullPageSize {
+    flex-direction: column;
+    min-height: 100vh;
+    display: flex;
+    position: relative;
+}
+
+.webContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* two equal columns */
+  gap: 20px; /* spacing between items */
+  padding: 10px;
+
+  iframe {
+    width: 100%;
+    height: 80vh;
+    border: none;
+  }
+}
