@@ -3,21 +3,19 @@ import styles from "./web-page.module.css";
 import { wowClassInfo, wowServerList } from "../api/wow-info";
 
 const WebPage = () => {
-  const [accessToken, setAccessToken] = useState(""); // access token from blizzard API
-
-  const [guildName, setGuildName] = useState(""); // user input guild name
-  const [serverName, setServerName] = useState(""); // user input server name
-  const formattedGuildName = guildName?.replaceAll(" ", "-")?.toLowerCase(); // format guild name for api calls
-
-  const [guildDataTable, setGuildDataTable] = useState(""); // guild data from blizzard API
-  const [playerDataTable, setPlayerDataTable] = useState([]); // array of guild member data from blizzard API
-
   const clientId = "c356c5e8c3ec4573b82f631a5da7c9cc";
   const clientSecret = "H0TBuu0X45pmU9Gz4tIZAhmTMeMGSmEI";
+  const [accessToken, setAccessToken] = useState(""); // access token retrieved from client & secret that allows us to call APIs
 
+  const [guildName, setGuildName] = useState(""); // user input guild name
+  const formattedGuildName = guildName?.replaceAll(" ", "-")?.toLowerCase(); // format guild name for api calls
+  const [serverName, setServerName] = useState(""); // user input server name
+  
+  const [guildDataTable, setGuildDataTable] = useState(""); // guild data from blizzard API we concat with player data
+  
   // using clientID and clientSecret get access token -key card to blizzard API-
   useEffect(() => {
-    async function getAccessToken() {
+    async function getAccessToken() { // wont pause app renders while processing
       try {
         const res = await fetch("https://us.battle.net/oauth/token", {
           method: "POST",
@@ -26,35 +24,38 @@ const WebPage = () => {
             Authorization: "Basic " + btoa(clientId + ":" + clientSecret),
           },
           body: "grant_type=client_credentials",
-        });
+        }); // 20 - 27 POST call to receive response object containing access token
 
-        const data = await res.json();
+        const data = await res.json(); // pauses execution inside the func while promise resolves and we get the access token data
         setAccessToken(data?.access_token); // set actual token
+
       } catch (error) {
         console.error("Error Fetching Access Token From Blizzard API:", error);
       }
     }
 
     getAccessToken();
-  }, []);
+  }, []); // empty dependency array so it only runs once on load
 
   // using access token fetch guild data from blizzard API
   async function fetchGuildData(server, guild, namespace, locale) {
     try {
       const res = await fetch(`https://us.api.blizzard.com/data/wow/guild/${server}/${guild}/roster?namespace=${namespace}&locale=${locale}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      }); // api call to get guild data
 
-      const data = await res.json();
-      setGuildDataTable(data);
+      const data = await res.json(); // pauses execution inside func while we get the guild data in json form
+      setGuildDataTable(data); // once promise resolved set guild data
 
-      fetchAllPlayers(server, data.members, namespace, locale); // use list of guild members to fetch player data
+      // call player api with list of guild members -data.members- to fetch player data and concat with guild data
+      fetchAllPlayers(server, data.members, namespace, locale); 
 
     } catch (error) {
       console.error("Error Fetching Guild Data From Blizzard API:", error);
     }
   }
 
+  // concatanates all player data to guild data using list of all guild members
   async function fetchAllPlayers(server, members, namespace, locale) {
     if (!members || members?.length === 0) return; // if no members, exit function
 
@@ -65,17 +66,17 @@ const WebPage = () => {
         )
           .then((res) => res.ok ? res.json() : null) // each fetch returns a promise of a member's data or null on 404
           .catch(() => null)
-      );
+      ); // map over members to create array of fetch promises
 
-      const results = await Promise.all(requests); // wait for all promises to resolve
+      const results = await Promise.all(requests); // resolve all promises to get array of player data / nulls
+      console.log("Player Data Results:", results);
 
-      // merge player info back into each guild member
-      const merged = members.map((member, i) => ({
+      const merged = members.map((member, index) => ({ // loop through each guild-member fetched from fetchGuildData API
         ...member,
-        player: results[i] || null,
-      }));
+        player: results[index], // adds new property "player" to merged with player data retrieved from API
+      })); // 
 
-      setGuildDataTable((prev) => ({ ...prev, members: merged }));
+      setGuildDataTable((prev) => ({ ...prev, members: merged })); // replaces or adds members property guildDataTable
     } catch (error) {
       console.error("Error Fetching Player Data:", error);
     }
