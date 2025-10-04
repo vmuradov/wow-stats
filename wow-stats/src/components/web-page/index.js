@@ -4,11 +4,14 @@ import "./index.css";
 import { wowClassInfo, wowServerList } from "../api/wow-info";
 
 const WebPage = () => {
-  const [accessToken, setAccessToken] = useState("");
-  const [guildName, setGuildName] = useState("");
-  const [serverName, setServerName] = useState("");
-  
-  const [guildDataTable, setGuildDataTable] = useState("");
+  const [accessToken, setAccessToken] = useState(""); // access token from blizzard API
+
+  const [guildName, setGuildName] = useState(""); // user input guild name
+  const [serverName, setServerName] = useState(""); // user input server name
+  const formattedGuildName = guildName.replaceAll(" ", "-").toLowerCase(); // format guild name for api calls
+
+  const [guildDataTable, setGuildDataTable] = useState(""); // guild data from blizzard API
+  const [playerDataTable, setPlayerDataTable] = useState([]); // array of guild member data from blizzard API
 
   const clientId = "3bcdab919674467d9f0547c414873a86";
   const clientSecret = "IEIAl53ewRPuaWsH95vwXiF0yu38Aw3a";
@@ -46,17 +49,34 @@ const WebPage = () => {
       const data = await res.json();
       setGuildDataTable(data);
 
+      fetchAllPlayers(server, data.members, namespace, locale); // use list of guild members to fetch player data
+
     } catch (error) {
       console.error("Error Fetching Guild Data From Blizzard API:", error);
     }
   }
 
-  const formattedGuildName = guildName.replaceAll(" ", "-").toLowerCase();
+  async function fetchAllPlayers(server, members, namespace, locale) {
+    if (!members || members.length === 0) return; // if no members, exit function
+
+    try {
+      const requests = members.map((member) =>
+        fetch(`https://us.api.blizzard.com/profile/wow/character/${server}/${member.character.name.toLowerCase()}?namespace=${namespace}&locale=${locale}`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        ).then((res) => res.json()) // each fetch returns a promise of a member's data
+      );
+
+      const results = await Promise.all(requests); // wait for all promises to resolve
+      setPlayerDataTable(results); // set state with array of all members' data
+
+    } catch (error) {
+      console.error("Error Fetching Player Data:", error);
+    }
+  }
+
+
   return (
     <div className={`${styles.fullPageSize} container`}>
-      <h3> serverName: {serverName} </h3>
-      <h3> guildName: {guildName} </h3>
-
       <div className="input-dropdown-container">
         <input
           type="text"
@@ -106,24 +126,24 @@ const WebPage = () => {
         </thead>
 
         <tbody>
-          {guildDataTable?.members?.map((toon, index) => (
+          {playerDataTable?.map((toon, index) => (
             <tr key={index}>
-              <td>{toon?.character?.level}</td>
+              <td> {toon?.level} </td>
               <td>
-                <img alt="" src={wowClassInfo[toon?.character?.playable_class?.id]?.icon} />
+                <img alt="" src={wowClassInfo[toon?.character_class?.id]?.icon} />
               </td>
               <td>
                 <a 
                   href={`https://classic-armory.org/character/us/mop/${serverName}/${toon?.character?.name}`}
                   target="_blank" rel="noopener noreferrer"
-                  style={{ color: wowClassInfo[toon?.character?.playable_class?.id]?.color }}
+                  style={{ color: wowClassInfo[toon?.character_class?.id]?.color }}
                 >
-                  {toon?.character?.name}
+                  {toon?.name}
                 </a>
               </td>
-              <td>{toon.rank}</td>
-              <td>{toon.ilvl}</td>
-              <td>{toon.role}</td>
+              <td> {toon.rank} </td>
+              <td> {toon.equipped_item_level} </td>
+              <td> {toon.active_spec.name} </td>
               <td>
                 <a 
                   href={`https://classic.warcraftlogs.com/character/us/${guildName}/${toon?.character?.name}`}
@@ -132,8 +152,8 @@ const WebPage = () => {
                   {toon.parse}
                 </a>
               </td>
-              <td>{new Date(toon.lastActive).toLocaleDateString()}</td>
-              <td>{toon.parse}</td>
+              <td> {new Date(toon.last_login_timestamp).toLocaleDateString()} </td>
+              <td> {toon.achievement_points} </td>
             </tr>
           ))}
         </tbody>
