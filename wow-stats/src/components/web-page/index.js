@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import styles from "./web-page.module.css";
 import "./index.css";
 import { wowClassInfo, wowServerList } from "../api/wow-info";
@@ -51,6 +51,7 @@ const WebPage = () => {
     }
   }
 
+  const formattedGuildName = guildName.replaceAll(" ", "-").toLowerCase();
   return (
     <div className={`${styles.fullPageSize} container`}>
       <h3> serverName: {serverName} </h3>
@@ -81,12 +82,7 @@ const WebPage = () => {
         </select>
 
         <button
-          onClick={() => {
-            setTimeout(() => {
-              setGuildName(guildName.replaceAll("-", " "));
-            }, 500);
-            fetchGuildData(serverName, guildName, 'profile-classic-us', 'en_US');
-          }}
+          onClick={() => { fetchGuildData(serverName, formattedGuildName, 'profile-classic-us', 'en_US'); }}
           disabled={!guildName || !serverName}
         >
           <span> Search </span>
@@ -114,7 +110,7 @@ const WebPage = () => {
             <tr key={index}>
               <td>{toon?.character?.level}</td>
               <td>
-                <img src={wowClassInfo[toon?.character?.playable_class?.id]?.icon} />
+                <img alt="" src={wowClassInfo[toon?.character?.playable_class?.id]?.icon} />
               </td>
               <td>
                 <a 
