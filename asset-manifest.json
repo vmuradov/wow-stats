@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/wow-stats/static/css/main.13ed0551.css",
-    "main.js": "/wow-stats/static/js/main.4f0bfb7f.js",
+    "main.js": "/wow-stats/static/js/main.dfe308fc.js",
     "index.html": "/wow-stats/index.html",
     "main.13ed0551.css.map": "/wow-stats/static/css/main.13ed0551.css.map",
-    "main.4f0bfb7f.js.map": "/wow-stats/static/js/main.4f0bfb7f.js.map"
+    "main.dfe308fc.js.map": "/wow-stats/static/js/main.dfe308fc.js.map"
   },
   "entrypoints": [
     "static/css/main.13ed0551.css",
-    "static/js/main.4f0bfb7f.js"
+    "static/js/main.dfe308fc.js"
   ]
 }
