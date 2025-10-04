@@ -1,42 +1,48 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import styles from "./web-page.module.css";
 import "./index.css";
-import { wowClassInfo } from "../../components/utility/wow-class-info";
+import { wowClassInfo, wowServerList } from "../api/wow-info";
 
 const WebPage = () => {
+  const [accessToken, setAccessToken] = useState("");
   const [guildName, setGuildName] = useState("");
   const [serverName, setServerName] = useState("");
+  
   const [guildDataTable, setGuildDataTable] = useState("");
 
   const clientId = "3bcdab919674467d9f0547c414873a86";
   const clientSecret = "IEIAl53ewRPuaWsH95vwXiF0yu38Aw3a";
 
   // using clientID and clientSecret get access token -key card to blizzard API-
-  async function getAccessToken() {
-  try {
-    const res = await fetch("https://us.battle.net/oauth/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "Basic " + btoa(clientId + ":" + clientSecret),
-      },
-      body: "grant_type=client_credentials",
-    });
+  useEffect(() => {
+    async function getAccessToken() {
+      try {
+        const res = await fetch("https://us.battle.net/oauth/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: "Basic " + btoa(clientId + ":" + clientSecret),
+          },
+          body: "grant_type=client_credentials",
+        });
 
-    const data = await res.json();
-    return data.access_token;
+        const data = await res.json();
+        return data.access_token;
 
-  } catch (error) {
-    console.error("Error Fetching Access Token From Blizzard API:", error);
-  }
-}
+      } catch (error) {
+        console.error("Error Fetching Access Token From Blizzard API:", error);
+      }
+    }
+
+    // call it inside effect
+    setAccessToken(getAccessToken());
+  }, []);
 
   // using access token fetch guild data from blizzard API
-  async function fetchGuildData(server='benediction', guild='armor-is-for-noobs', namespace='profile-classic-us', locale='en_US') {
+  async function fetchGuildData(server, guild, namespace, locale) {
     try {
-      const token = await getAccessToken(); // <-- wait for token
       const res = await fetch(`https://us.api.blizzard.com/data/wow/guild/${server}/${guild}/roster?namespace=${namespace}&locale=${locale}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       const data = await res.json();
@@ -47,34 +53,39 @@ const WebPage = () => {
     }
   }
 
-  async function fetchPlayerData(server='benediction', characterName, namespace='profile-classic-us', locale='en_US') {
-    try {
-      const token = await getAccessToken(); // <-- wait for token
-      const res = await fetch(`https://us.api.blizzard.com/profile/wow/character/${server}/${characterName}?namespace=${namespace}&locale=${locale}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await res.json();
-      setGuildDataTable(data);
-
-    } catch (error) {
-      console.error("Error Fetching Player Data From Blizzard API:", error );
-    }
-  }
-
-  useEffect(() => {
-    fetchGuildData();
-  }, []);
-
   return (
     <div className={`${styles.fullPageSize} container`}>
-      <input
-        type="text"
-        placeholder="Enter Guild Name"
-        value={guildName}
-        onChange={(e) => setGuildName(e.target.value)}
-      />
-      
+      <h3> serverName: {serverName} </h3>
+      <h3> guildName: {guildName} </h3>
+
+      <div className="input-dropdown-container">
+        <input
+          type="text"
+          placeholder="Enter Guild Name"
+          value={guildName}
+          onChange={(e) => setGuildName(e.target.value)}
+        />
+
+        <select
+          value={serverName}
+          onChange={(e) => setServerName(e.target.value)}
+        > 
+          <option value="" disabled> Select Server </option>
+          {wowServerList?.servers?.map((server, index) => (
+            <option key={index} value={server.toLowerCase()}>
+              {server}
+            </option>
+          ))}
+        </select>
+
+        <button
+          onClick={() => fetchGuildData(serverName, guildName, 'profile-classic-us', 'en_US')}
+          disabled={!guildName || !serverName}
+        >
+          <span> Search </span>
+        </button>
+
+      </div>
 
       <table className="simple-table">
         <thead>
@@ -112,7 +123,7 @@ const WebPage = () => {
               <td>{toon.role}</td>
               <td>
                 <a 
-                  href={`https://classic.warcraftlogs.com/character/us/benediction/${toon?.character?.name}`}
+                  href={`https://classic.warcraftlogs.com/character/us/${guildName}/${toon?.character?.name}`}
                   target="_blank" rel="noopener noreferrer" 
                 >
                   {toon.parse}

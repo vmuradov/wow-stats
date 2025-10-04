@@ -55,3 +55,7 @@ export const wowClassInfo = {
         color: "#FF7D0A"
     }
 };
+
+export const wowServerList = {
+    servers: ["Ra-Den", "Pagle", "Benediction", "Grobbulus"]
+};
