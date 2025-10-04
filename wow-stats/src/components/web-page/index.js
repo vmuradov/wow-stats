@@ -82,7 +82,7 @@ const WebPage = () => {
     }
   }
 
-  {console.log(guildDataTable)}
+  // {console.log(guildDataTable)}
   return (
     <div className={`${styles.fullPageSize} container`}>
       <div className="input-dropdown-container">
