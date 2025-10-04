@@ -27,15 +27,13 @@ const WebPage = () => {
         });
 
         const data = await res.json();
-        return data.access_token;
-
+        setAccessToken(data.access_token); // set actual token
       } catch (error) {
         console.error("Error Fetching Access Token From Blizzard API:", error);
       }
     }
 
-    // call it inside effect
-    setAccessToken(getAccessToken());
+    getAccessToken();
   }, []);
 
   // using access token fetch guild data from blizzard API
