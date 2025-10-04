@@ -2,7 +2,7 @@ export const wowClassInfo = {
     1: {
         class: "Warrior",
         icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_warrior.jpg",
-        color: "#C79C6E",
+        color: "#825A28",
         spec: [
             {"Arms": "DPS"}, 
             {"Fury": "DPS"},
@@ -12,7 +12,7 @@ export const wowClassInfo = {
     2: {
         class: "Paladin",
         icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_paladin.jpg",
-        color: "#F58CBA",
+        color: "rgba(240, 30, 125, 1)",
         spec: [
             {"Protection": "Tank"},
             {"Holy": "Healer"},
@@ -22,7 +22,7 @@ export const wowClassInfo = {
     3: {
         class: "Hunter",
         icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_hunter.jpg",
-        color: "#ABD473",
+        color: "#647846",
         spec: [
             {"Beast Mastery": "DPS"},
             {"Marksmanship": "DPS"},
@@ -32,7 +32,7 @@ export const wowClassInfo = {
     4: {
         class: "Rogue",
         icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_rogue.jpg",
-        color: "#FFF569",
+        color: "#BABE41",
         spec: [
             {"Assassination": "DPS"},
             {"Combat": "DPS"},
@@ -42,7 +42,7 @@ export const wowClassInfo = {
     5: {
         class: "Priest",
         icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_priest.jpg",
-        color: "#FFFFFF",
+        color: "#8e8787",
         spec: [
             {"Discipline": "Healer"},
             {"Holy": "Healer"},
@@ -92,7 +92,7 @@ export const wowClassInfo = {
     10: {
         class: "Monk",
         icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_monk.jpg",
-        color: "#00FF96",
+        color: "#2DB478",
         spec: [
             {"Brewmaster": "Tank"},
             {"Mistweaver": "Healer"},
