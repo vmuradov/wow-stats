@@ -57,5 +57,5 @@ export const wowClassInfo = {
 };
 
 export const wowServerList = {
-    servers: ["Ra-Den", "Pagle", "Benediction", "Grobbulus"]
+    servers: ["Raden", "Pagle", "Benediction", "Grobbulus"]
 };

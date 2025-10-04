@@ -62,6 +62,10 @@ const WebPage = () => {
           placeholder="Enter Guild Name"
           value={guildName}
           onChange={(e) => setGuildName(e.target.value)}
+          onKeyDown={(e) => {
+          if (e.key === "Enter" && guildName && serverName)
+            fetchGuildData(serverName, guildName, "profile-classic-us", "en_US");
+        }}
         />
 
         <select
@@ -77,7 +81,10 @@ const WebPage = () => {
         </select>
 
         <button
-          onClick={() => fetchGuildData(serverName, guildName, 'profile-classic-us', 'en_US')}
+          onClick={() => {
+            fetchGuildData(serverName, guildName, 'profile-classic-us', 'en_US');
+            setGuildName(guildName.replaceAll(" ", "-").toLowerCase());
+          }}
           disabled={!guildName || !serverName}
         >
           <span> Search </span>
