@@ -60,21 +60,27 @@ const WebPage = () => {
     if (!members || members?.length === 0) return; // if no members, exit function
 
     try {
-      const requests = members?.map((member) =>
+      const requests = members.map((member) =>
         fetch(`https://us.api.blizzard.com/profile/wow/character/${server}/${member?.character?.name?.toLowerCase()}?namespace=${namespace}&locale=${locale}`,
           { headers: { Authorization: `Bearer ${accessToken}` } }
-        ).then((res) => res.json()) // each fetch returns a promise of a member's data
+        )
+          .then((res) => res.ok ? res.json() : null) // each fetch returns a promise of a member's data or null on 404
+          .catch(() => null)
       );
 
       const results = await Promise.all(requests); // wait for all promises to resolve
-      setPlayerDataTable(results); // set state with array of all members' data
 
+      // merge player info back into each guild member
+      const merged = members.map((member, i) => ({
+        ...member,
+        player: results[i] || null,
+      }));
+
+      setGuildDataTable((prev) => ({ ...prev, members: merged }));
     } catch (error) {
       console.error("Error Fetching Player Data:", error);
     }
   }
-
-
 
   {console.log(guildDataTable)}
   return (
@@ -128,39 +134,43 @@ const WebPage = () => {
         </thead>
 
         <tbody>
-          {/* {console.log(playerDataTable)} */}
-          {playerDataTable?.map((toon, index) => (
+          {guildDataTable?.members?.map((toon, index) => (
             <tr key={index}>
-              <td> {toon?.level} </td>
+              <td> { toon?.character?.level } </td>
               <td>
-                <img alt="" src={wowClassInfo[toon?.character_class?.id]?.icon} />
+                <img alt="" src={wowClassInfo[toon?.character?.playable_class?.id]?.icon} />
               </td>
               <td>
                 <a 
                   href={`https://classic-armory.org/character/us/mop/${serverName}/${toon?.character?.name}`}
                   target="_blank" rel="noopener noreferrer"
-                  style={{ color: wowClassInfo[toon?.character_class?.id]?.color }}
+                  style={{ color: wowClassInfo[toon?.character?.playable_class?.id]?.color }}
                 >
-                  {toon?.name}
+                  {toon?.character?.name}
                 </a>
               </td>
-              <td> {toon?.rank} </td>
-              <td> {toon?.equipped_item_level} </td>
+              <td> 
+                {toon?.rank === 0 ? "Guild Master" : toon?.rank === 1 ? "Officer" : "---"} 
+              </td>
+              <td> {toon?.player ? toon?.player?.equipped_item_level : "---"} </td>
               <td>
-                {(wowClassInfo[toon?.character_class?.id]?.spec) // Look Throigh the wowClassInfo object
-                  ?.find(obj => obj[toon?.active_spec?.name]) // IF you find the key-val pair
-                    ?.[toon?.active_spec?.name]}  {/* check if undefined ?. & access @ key */}
+                {toon?.player?.active_spec?.name ?
+                  (wowClassInfo[toon?.character?.playable_class?.id]?.spec) // Look Throigh the wowClassInfo object
+                    ?.find(obj => obj[toon?.player?.active_spec?.name]) // IF you find the key-val pair
+                      ?.[toon?.player?.active_spec?.name]  // check if undefined ?. & access @ key
+                    : "---"
+                  }
               </td>
               <td>
                 <a 
-                  href={`https://classic.warcraftlogs.com/character/us/${guildName}/${toon?.character?.name}`}
+                  href={`https://classic.warcraftlogs.com/character/us/${serverName}/${toon?.character?.name}`}
                   target="_blank" rel="noopener noreferrer" 
                 >
-                  {toon?.parse}
+                  PENDING
                 </a>
               </td>
-              <td> {new Date(toon?.last_login_timestamp)?.toLocaleDateString()} </td>
-              <td> {toon?.achievement_points} </td>
+              <td> { toon?.player ? new Date(toon?.player?.last_login_timestamp)?.toLocaleDateString() : "---" } </td>
+              <td> { toon?.player ? toon?.player?.achievement_points : "---" } </td>
             </tr>
           ))}
         </tbody>

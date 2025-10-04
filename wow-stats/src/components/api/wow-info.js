@@ -16,7 +16,7 @@ export const wowClassInfo = {
         spec: [
             {"Protection": "Tank"},
             {"Holy": "Healer"},
-            {"Retrybution": "DPS"}
+            {"Retribution": "DPS"}
         ]
     },
     3: {
