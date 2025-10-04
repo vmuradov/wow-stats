@@ -82,8 +82,10 @@ const WebPage = () => {
 
         <button
           onClick={() => {
+            setTimeout(() => {
+              setGuildName(guildName.replaceAll("-", " "));
+            }, 500);
             fetchGuildData(serverName, guildName, 'profile-classic-us', 'en_US');
-            setGuildName(guildName.replaceAll(" ", "-").toLowerCase());
           }}
           disabled={!guildName || !serverName}
         >
