@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import styles from "./web-page.module.css";
-import "./index.css";
 import { wowClassInfo, wowServerList } from "../api/wow-info";
 
 const WebPage = () => {
@@ -85,7 +84,7 @@ const WebPage = () => {
   // {console.log(guildDataTable)}
   return (
     <div className={`${styles.fullPageSize} container`}>
-      <div className="input-dropdown-container">
+      <div className={styles.dropdownContainer}>
         <input
           type="text"
           placeholder="Enter Guild Name"
@@ -112,13 +111,14 @@ const WebPage = () => {
         <button
           onClick={() => { fetchGuildData(serverName, formattedGuildName, 'profile-classic-us', 'en_US'); }}
           disabled={!guildName || !serverName}
+          className={styles.searchButton}
         >
           <span> Search </span>
         </button>
 
       </div>
 
-      <table className="simple-table">
+      <table className={`${styles.guildTable}`}>
         <thead>
           <tr>
             <th> lvl </th>

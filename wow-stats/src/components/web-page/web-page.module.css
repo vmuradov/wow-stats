@@ -1,3 +1,10 @@
+/* Global page background so the whole site appears gray */
+:global(html), :global(body) {
+    height: 100%;
+    margin: 0;
+    background-color: #e6e6e6; /* light gray */
+}
+
 .fullPageSize {
     flex-direction: column;
     min-height: 100vh;
@@ -5,15 +12,80 @@
     position: relative;
 }
 
-.webContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* two equal columns */
-  gap: 20px; /* spacing between items */
-  padding: 10px;
+.dropdownContainer {
+  display: flex;
+  gap: 10px;
+  max-width: 400px;
+  margin: 20px auto;
+}
 
-  iframe {
-    width: 100%;
-    height: 80vh;
-    border: none;
+.dropdownContainer input,
+.dropdownContainer select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.dropdownContainer input:focus,
+.dropdownContainer select:focus {
+  outline: none;
+  border-color: #007BFF;
+  box-shadow: 0 0 3px #007BFF;
+}
+
+.dropdownContainer input {
+  flex: 1; /* takes remaining space */
+}
+
+.dropdownContainer select {
+  flex: 0 0 120px; /* fixed width */
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.searchButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: white;
+
+  span {
+    color: black;
+  }
+
+  &&:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+.guildTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+.guildTable th,
+.guildTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.guildTable th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+/* class icons inside table */
+.guildTable td {
+  img {
+    width: 40px;
+    height: 40px;
   }
 }
