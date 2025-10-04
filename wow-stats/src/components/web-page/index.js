@@ -8,13 +8,13 @@ const WebPage = () => {
 
   const [guildName, setGuildName] = useState(""); // user input guild name
   const [serverName, setServerName] = useState(""); // user input server name
-  const formattedGuildName = guildName.replaceAll(" ", "-").toLowerCase(); // format guild name for api calls
+  const formattedGuildName = guildName?.replaceAll(" ", "-")?.toLowerCase(); // format guild name for api calls
 
   const [guildDataTable, setGuildDataTable] = useState(""); // guild data from blizzard API
   const [playerDataTable, setPlayerDataTable] = useState([]); // array of guild member data from blizzard API
 
-  const clientId = "3bcdab919674467d9f0547c414873a86";
-  const clientSecret = "IEIAl53ewRPuaWsH95vwXiF0yu38Aw3a";
+  const clientId = "c356c5e8c3ec4573b82f631a5da7c9cc";
+  const clientSecret = "H0TBuu0X45pmU9Gz4tIZAhmTMeMGSmEI";
 
   // using clientID and clientSecret get access token -key card to blizzard API-
   useEffect(() => {
@@ -30,7 +30,7 @@ const WebPage = () => {
         });
 
         const data = await res.json();
-        setAccessToken(data.access_token); // set actual token
+        setAccessToken(data?.access_token); // set actual token
       } catch (error) {
         console.error("Error Fetching Access Token From Blizzard API:", error);
       }
@@ -57,11 +57,11 @@ const WebPage = () => {
   }
 
   async function fetchAllPlayers(server, members, namespace, locale) {
-    if (!members || members.length === 0) return; // if no members, exit function
+    if (!members || members?.length === 0) return; // if no members, exit function
 
     try {
-      const requests = members.map((member) =>
-        fetch(`https://us.api.blizzard.com/profile/wow/character/${server}/${member.character.name.toLowerCase()}?namespace=${namespace}&locale=${locale}`,
+      const requests = members?.map((member) =>
+        fetch(`https://us.api.blizzard.com/profile/wow/character/${server}/${member?.character?.name?.toLowerCase()}?namespace=${namespace}&locale=${locale}`,
           { headers: { Authorization: `Bearer ${accessToken}` } }
         ).then((res) => res.json()) // each fetch returns a promise of a member's data
       );
@@ -75,6 +75,8 @@ const WebPage = () => {
   }
 
 
+
+  {console.log(guildDataTable)}
   return (
     <div className={`${styles.fullPageSize} container`}>
       <div className="input-dropdown-container">
@@ -86,7 +88,7 @@ const WebPage = () => {
           onKeyDown={(e) => {
           if (e.key === "Enter" && guildName && serverName)
             fetchGuildData(serverName, guildName, "profile-classic-us", "en_US");
-        }}
+          }}
         />
 
         <select
@@ -95,7 +97,7 @@ const WebPage = () => {
         > 
           <option value="" disabled> Select Server </option>
           {wowServerList?.servers?.map((server, index) => (
-            <option key={index} value={server.toLowerCase()}>
+            <option key={index} value={server?.toLowerCase()}>
               {server}
             </option>
           ))}
@@ -126,6 +128,7 @@ const WebPage = () => {
         </thead>
 
         <tbody>
+          {/* {console.log(playerDataTable)} */}
           {playerDataTable?.map((toon, index) => (
             <tr key={index}>
               <td> {toon?.level} </td>
@@ -141,19 +144,23 @@ const WebPage = () => {
                   {toon?.name}
                 </a>
               </td>
-              <td> {toon.rank} </td>
-              <td> {toon.equipped_item_level} </td>
-              <td> {toon.active_spec.name} </td>
+              <td> {toon?.rank} </td>
+              <td> {toon?.equipped_item_level} </td>
+              <td>
+                {(wowClassInfo[toon?.character_class?.id]?.spec) // Look Throigh the wowClassInfo object
+                  ?.find(obj => obj[toon?.active_spec?.name]) // IF you find the key-val pair
+                    ?.[toon?.active_spec?.name]}  {/* check if undefined ?. & access @ key */}
+              </td>
               <td>
                 <a 
                   href={`https://classic.warcraftlogs.com/character/us/${guildName}/${toon?.character?.name}`}
                   target="_blank" rel="noopener noreferrer" 
                 >
-                  {toon.parse}
+                  {toon?.parse}
                 </a>
               </td>
-              <td> {new Date(toon.last_login_timestamp).toLocaleDateString()} </td>
-              <td> {toon.achievement_points} </td>
+              <td> {new Date(toon?.last_login_timestamp)?.toLocaleDateString()} </td>
+              <td> {toon?.achievement_points} </td>
             </tr>
           ))}
         </tbody>
