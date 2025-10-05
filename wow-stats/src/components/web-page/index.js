@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./web-page.module.css";
-import { wowClassInfo, wowServerList } from "../api/wow-info";
+import { wowClassInfo, wowServerList, guildTableSortingOptions } from "../api/wow-info";
 
 const WebPage = () => {
   const clientId = "c356c5e8c3ec4573b82f631a5da7c9cc";
@@ -13,6 +13,8 @@ const WebPage = () => {
   
   const [guildDataTable, setGuildDataTable] = useState(""); // guild data from blizzard API we concat with player data
   
+  const [sortingOption, setSortingOption] = useState(guildDataTable[0]);
+
   // using clientID and clientSecret get access token -key card to blizzard API-
   useEffect(() => {
     async function getAccessToken() { // wont pause app renders while processing
@@ -116,9 +118,21 @@ const WebPage = () => {
         >
           <span> Search </span>
         </button>
-
       </div>
 
+      {(guildDataTable.members &&
+        <div className={`${styles.sortSelect}`}>
+          <select value={sortingOption} onChange={(e) => setSortingOption(e.target.value)} >
+            {/* select value makes component controlled and insures that selected option is in sync with var */}
+            {guildTableSortingOptions?.options?.map((option, index) => ( // map over my sorting options array
+              <option key={index} value={option}> {/* <option>'s value becomes e.target.value, onChange updates sortingOption state */}
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+ 
       <table className={`${styles.guildTable}`}>
         <thead>
           <tr>

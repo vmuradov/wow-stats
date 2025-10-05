@@ -20,7 +20,8 @@
 }
 
 .dropdownContainer input,
-.dropdownContainer select {
+.dropdownContainer select,
+.sortSelect select {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -88,4 +89,10 @@
     width: 40px;
     height: 40px;
   }
+}
+
+/* pushes an elem all the way to right in a flexbox or grid */
+.sortSelect {
+  margin: 0px 20px 5px auto;
+  cursor: pointer;
 }

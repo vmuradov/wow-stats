@@ -115,3 +115,17 @@ export const wowClassInfo = {
 export const wowServerList = {
     servers: ["Raden", "Pagle", "Benediction", "Grobbulus"]
 };
+
+export const guildTableSortingOptions = {
+    options: [
+        "Alphabetical",
+        "Level",
+        "Class",
+        "Guild Rank",
+        "Item Level",
+        "Role",
+        "Parse",
+        "Last Active",
+        "Achievement Points",
+    ]
+};
