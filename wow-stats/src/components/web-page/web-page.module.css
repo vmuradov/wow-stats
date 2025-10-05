@@ -95,4 +95,5 @@
 .sortSelect {
   margin: 0px 20px 5px auto;
   cursor: pointer;
+  text-align: right;
 }

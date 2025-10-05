@@ -121,75 +121,77 @@ const WebPage = () => {
       </div>
 
       {(guildDataTable.members &&
-        <div className={`${styles.sortSelect}`}>
-          <select value={sortingOption} onChange={(e) => setSortingOption(e.target.value)} >
-            {/* select value makes component controlled and insures that selected option is in sync with var */}
-            {guildTableSortingOptions?.options?.map((option, index) => ( // map over my sorting options array
-              <option key={index} value={option}> {/* <option>'s value becomes e.target.value, onChange updates sortingOption state */}
-                {option}
-              </option>
-            ))}
-          </select>
+        <div>
+          <div className={`${styles.sortSelect}`}>
+            <select value={sortingOption} onChange={(e) => setSortingOption(e.target.value)} >
+              {/* select value makes component controlled and insures that selected option is in sync with var */}
+              {guildTableSortingOptions?.options?.map((option, index) => ( // map over my sorting options array
+                <option key={index} value={option}> {/* <option>'s value becomes e.target.value, onChange updates sortingOption state */}
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        
+          <table className={`${styles.guildTable}`}>
+            <thead>
+              <tr>
+                <th> lvl </th>
+                <th> Class </th>
+                <th> Name </th>
+                <th> Guild Rank </th>
+                <th> ilvl </th>
+                <th> Role </th>
+                <th> Parse AVG </th>
+                <th> Last Active </th>
+                <th> Achievement Points </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {guildDataTable?.members?.map((toon, index) => (
+                <tr key={index}>
+                  <td> { toon?.character?.level } </td>
+                  <td>
+                    <img alt="" src={wowClassInfo[toon?.character?.playable_class?.id]?.icon} />
+                  </td>
+                  <td>
+                    <a 
+                      href={`https://classic-armory.org/character/us/mop/${serverName}/${toon?.character?.name}`}
+                      target="_blank" rel="noopener noreferrer"
+                      style={{ color: wowClassInfo[toon?.character?.playable_class?.id]?.color }}
+                    >
+                      {toon?.character?.name}
+                    </a>
+                  </td>
+                  <td> 
+                    {toon?.rank === 0 ? "Guild Master" : toon?.rank === 1 ? "Officer" : "---"} 
+                  </td>
+                  <td> {toon?.player ? toon?.player?.equipped_item_level : "---"} </td>
+                  <td>
+                    {toon?.player?.active_spec?.name ?
+                      (wowClassInfo[toon?.character?.playable_class?.id]?.spec) // Look Throigh the wowClassInfo object
+                        ?.find(obj => obj[toon?.player?.active_spec?.name]) // IF you find the key-val pair
+                          ?.[toon?.player?.active_spec?.name]  // check if undefined ?. & access @ key
+                        : "---"
+                      }
+                  </td>
+                  <td>
+                    <a 
+                      href={`https://classic.warcraftlogs.com/character/us/${serverName}/${toon?.character?.name}`}
+                      target="_blank" rel="noopener noreferrer" 
+                    >
+                      LINK
+                    </a>
+                  </td>
+                  <td> { toon?.player ? new Date(toon?.player?.last_login_timestamp)?.toLocaleDateString() : "---" } </td>
+                  <td> { toon?.player ? toon?.player?.achievement_points : "---" } </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
- 
-      <table className={`${styles.guildTable}`}>
-        <thead>
-          <tr>
-            <th> lvl </th>
-            <th> Class </th>
-            <th> Name </th>
-            <th> Guild Rank </th>
-            <th> ilvl </th>
-            <th> Role </th>
-            <th> Parse AVG </th>
-            <th> Last Active </th>
-            <th> Achievement Points </th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {guildDataTable?.members?.map((toon, index) => (
-            <tr key={index}>
-              <td> { toon?.character?.level } </td>
-              <td>
-                <img alt="" src={wowClassInfo[toon?.character?.playable_class?.id]?.icon} />
-              </td>
-              <td>
-                <a 
-                  href={`https://classic-armory.org/character/us/mop/${serverName}/${toon?.character?.name}`}
-                  target="_blank" rel="noopener noreferrer"
-                  style={{ color: wowClassInfo[toon?.character?.playable_class?.id]?.color }}
-                >
-                  {toon?.character?.name}
-                </a>
-              </td>
-              <td> 
-                {toon?.rank === 0 ? "Guild Master" : toon?.rank === 1 ? "Officer" : "---"} 
-              </td>
-              <td> {toon?.player ? toon?.player?.equipped_item_level : "---"} </td>
-              <td>
-                {toon?.player?.active_spec?.name ?
-                  (wowClassInfo[toon?.character?.playable_class?.id]?.spec) // Look Throigh the wowClassInfo object
-                    ?.find(obj => obj[toon?.player?.active_spec?.name]) // IF you find the key-val pair
-                      ?.[toon?.player?.active_spec?.name]  // check if undefined ?. & access @ key
-                    : "---"
-                  }
-              </td>
-              <td>
-                <a 
-                  href={`https://classic.warcraftlogs.com/character/us/${serverName}/${toon?.character?.name}`}
-                  target="_blank" rel="noopener noreferrer" 
-                >
-                  PENDING
-                </a>
-              </td>
-              <td> { toon?.player ? new Date(toon?.player?.last_login_timestamp)?.toLocaleDateString() : "---" } </td>
-              <td> { toon?.player ? toon?.player?.achievement_points : "---" } </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
 
     </div>
   );
