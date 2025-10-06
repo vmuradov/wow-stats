@@ -204,8 +204,9 @@ const WebPage = () => {
 
       {(guildDataTable.members &&
         <div>
+          {/* Sorting Dropdown */}
           <div className={`${styles.sortSelect}`}>
-            <select value={sortingOption} onChange={(e) => setSortingOption(e.target.value)} >
+            <select value={sortingOption} onChange={(e) => setSortingOption(e.target.value)} disabled style={{opacity: "0.6", cursor: "not-allowed"}} >
               {/* select value makes component controlled and insures that selected option is in sync with var */}
               {guildTableSortingOptions?.options?.map((option, index) => ( // map over my sorting options array
                 <option key={index} value={option}> {/* <option>'s value becomes e.target.value, onChange updates sortingOption state */}
@@ -235,7 +236,13 @@ const WebPage = () => {
                 <tr key={index}>
                   <td> { toon?.character?.level } </td>
                   <td>
-                    <img alt="" src={wowClassInfo[toon?.character?.playable_class?.id]?.icon} />
+                    <img 
+                      alt="" 
+                      src={
+                        wowClassInfo[toon?.character?.playable_class?.id]?.icon?.
+                          find(obj => obj[toon?.player?.active_spec?.name])?.[toon?.player?.active_spec?.name] // IF you find the key-val pair}
+                      }
+                    />
                   </td>
                   <td>
                     <a 

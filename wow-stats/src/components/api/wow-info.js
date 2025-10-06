@@ -1,7 +1,11 @@
 export const wowClassInfo = {
     1: {
         class: "Warrior",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_warrior.jpg",
+        icon: [
+            {"Arms": "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_savageblow.jpg"},
+            {"Fury": "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_innerrage.jpg"},
+            {"Protection": "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg"}
+        ],
         color: "#825A28",
         spec: [
             {"Arms": "DPS"}, 
@@ -11,7 +15,11 @@ export const wowClassInfo = {
     },
     2: {
         class: "Paladin",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_paladin.jpg",
+        icon: [
+            {"Protection": "https://wow.zamimg.com/images/wow/icons/large/ability_paladin_shieldofthetemplar.jpg"},
+            {"Holy": "https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg"},
+            {"Retribution": "https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg"}
+        ],
         color: "rgba(240, 30, 125, 1)",
         spec: [
             {"Protection": "Tank"},
@@ -21,7 +29,11 @@ export const wowClassInfo = {
     },
     3: {
         class: "Hunter",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_hunter.jpg",
+        icon: [
+            {"Beast Mastery": "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg"},
+            {"Marksmanship": "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_focusedaim.jpg"},
+            {"Survival": "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_camouflage.jpg"}
+        ],
         color: "#647846",
         spec: [
             {"Beast Mastery": "DPS"},
@@ -31,7 +43,11 @@ export const wowClassInfo = {
     },
     4: {
         class: "Rogue",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_rogue.jpg",
+        icon: [
+            {"Assassination": "https://wow.zamimg.com/images/wow/icons/large/ability_rogue_deadlybrew.jpg"},
+            {"Combat": "https://wow.zamimg.com/images/wow/icons/large/ability_rogue_waylay.jpg"},
+            {"Subtlety": "https://wow.zamimg.com/images/wow/icons/large/ability_stealth.jpg"}
+        ],
         color: "#BABE41",
         spec: [
             {"Assassination": "DPS"},
@@ -41,7 +57,11 @@ export const wowClassInfo = {
     },
     5: {
         class: "Priest",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_priest.jpg",
+        icon: [
+            {"Discipline": "https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg"},
+            {"Holy": "https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg"},
+            {"Shadow": "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg"}
+        ],
         color: "#8e8787",
         spec: [
             {"Discipline": "Healer"},
@@ -51,7 +71,11 @@ export const wowClassInfo = {
     },
     6: {
         class: "Death Knight",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_deathknight.jpg",
+        icon: [
+            {"Blood": "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_bloodpresence.jpg"},
+            {"Unholy": "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg"},
+            {"Frost": "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_frostpresence.jpg"}
+        ],
         color: "#C41F3B",
         spec: [
             {"Blood": "Tank"},
@@ -61,7 +85,11 @@ export const wowClassInfo = {
     },
     7: {
         class: "Shaman",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_shaman.jpg",
+        icon: [
+            {"Elemental": "https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightning.jpg"},
+            {"Restoration": "https://wow.zamimg.com/images/wow/icons/large/spell_nature_magicimmunity.jpg"},
+            {"Enhancement": "https://wow.zamimg.com/images/wow/icons/large/spell_shaman_improvedstormstrike.jpg"}
+        ],
         color: "#0070DE",
         spec: [
             {"Elemental": "DPS"},
@@ -71,7 +99,11 @@ export const wowClassInfo = {
     },
     8: {
         class: "Mage",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_mage.jpg",
+        icon: [
+            {"Arcane": "https://wow.zamimg.com/images/wow/icons/large/spell_holy_magicalsentry.jpg"},
+            {"Fire": "https://wow.zamimg.com/images/wow/icons/large/spell_fire_firebolt02.jpg"},
+            {"Frost": "https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostbolt02.jpg"}
+        ],
         color: "#69CCF0",
         spec: [
             {"Arcane": "DPS"},
@@ -81,7 +113,11 @@ export const wowClassInfo = {
     },
     9: {
         class: "Warlock",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_warlock.jpg",
+        icon: [
+            {"Affliction": "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_deathcoil.jpg"},
+            {"Demonology": "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_metamorphosis.jpg"},
+            {"Destruction": "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_rainoffire.jpg"}
+        ],
         color: "#9482C9",
         spec: [
             {"Affliction": "DPS"},
@@ -91,7 +127,11 @@ export const wowClassInfo = {
     },
     10: {
         class: "Monk",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_monk.jpg",
+        icon: [
+            {"Brewmaster": "https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg"},
+            {"Mistweaver": "https://wow.zamimg.com/images/wow/icons/large/spell_monk_mistweaver_spec.jpg"},
+            {"Windwalker": "https://wow.zamimg.com/images/wow/icons/large/spell_monk_windwalker_spec.jpg"}
+        ],
         color: "#2DB478",
         spec: [
             {"Brewmaster": "Tank"},
@@ -101,7 +141,12 @@ export const wowClassInfo = {
     },
     11: {
         class: "Druid",
-        icon: "https://wow.zamimg.com/images/wow/icons/large/classicon_druid.jpg",
+        icon: [
+            {"Guardian": "https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg"},
+            {"Restoration": "https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingtouch.jpg"},
+            {"Balance": "https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg"},
+            {"Feral": "https://wow.zamimg.com/images/wow/icons/large/ability_druid_catform.jpg"}
+        ],
         color: "#FF7D0A",
         spec: [
             {"Guardian": "Tank"},
