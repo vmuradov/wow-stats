@@ -281,7 +281,6 @@ const WebPage = () => {
                                           )
                                     }}
                       >
-                        {console.log(toon)}
                         {toon?.parse?.bestPerformanceAverage ? `${parseFloat(toon?.parse?.bestPerformanceAverage).toFixed(2)}` : "N/A"}
                       </span>
                     </a>
