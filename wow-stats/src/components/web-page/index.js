@@ -128,13 +128,13 @@ const WebPage = () => {
     return j?.data?.characterData?.character?.id;
   }
 
-  async function getParse(charId) {
+  async function getParse(charId, metric) {
     const query = `
       {
         characterData {
           character(id: ${charId}) {
             name
-            zoneRankings(metric: dps)
+            zoneRankings(metric: ${metric})
           }
         }
       }
@@ -148,14 +148,18 @@ const WebPage = () => {
       body: JSON.stringify({ query }),
     });
     const j = await res.json();
-    return j?.data?.characterData?.character?.zoneRankings?.bestPerformanceAverage;
+    return j?.data?.characterData?.character?.zoneRankings;
   }
 
   async function fetchPlayerParseData(server, members, region) {
 
     const finalDT = await Promise.all( members?.map(async (member, index) => {
+        const metric = (wowClassInfo[member?.player?.character_class?.id]?.spec) // Look Throigh the wowClassInfo object
+                        ?.find(obj => obj[member?.player?.active_spec?.name]) // IF you find the key-val pair
+                          ?.[member?.player?.active_spec?.name];  // check if undefined ?. & access @ key
+        const metricType = metric === "Healer" ? "hps" : "dps";
         const wlogsPlayerId = await getLoggedPlayerId(logAccessToken, member?.character.name, server, region);
-        const wlogsPlayerParse = await getParse(wlogsPlayerId);
+        const wlogsPlayerParse = await getParse(wlogsPlayerId, metricType);
         return { ...member, playerId: wlogsPlayerId, parse: wlogsPlayerParse };
       })
     );
@@ -257,10 +261,29 @@ const WebPage = () => {
                   <td>
                     <a 
                       href={`https://classic.warcraftlogs.com/character/us/${serverName}/${toon?.character?.name}`}
-                      target="_blank" rel="noopener noreferrer" 
+                      target="_blank" rel="noopener noreferrer"
                     >
-                      {toon?.parse ? 
-                        parseFloat(toon?.parse).toFixed(2) : "---"}
+                      <span style={{color: "black"}}>
+                        {toon?.parse ?
+                          toon?.parse?.difficulty === 4 ? "Heroic" : 
+                          toon?.parse?.difficulty === 3 ? "Normal" : 
+                          "" : 
+                        ""
+                        }
+                      </span>
+                      <br />
+                      <span style={{ color: (toon?.parse?.bestPerformanceAverage === 100 ? "tan" :
+                                            toon?.parse?.bestPerformanceAverage >= 99 ? "pink" :
+                                            toon?.parse?.bestPerformanceAverage >= 95 ? "orange" :
+                                            toon?.parse?.bestPerformanceAverage >= 75 ? "purple" :
+                                            toon?.parse?.bestPerformanceAverage >= 50 ? "blue" :
+                                            toon?.parse?.bestPerformanceAverage >= 25 ? "green" : "gray"
+                                          )
+                                    }}
+                      >
+                        {console.log(toon)}
+                        {toon?.parse?.bestPerformanceAverage ? `${parseFloat(toon?.parse?.bestPerformanceAverage).toFixed(2)}` : "N/A"}
+                      </span>
                     </a>
                   </td>
                   <td> { toon?.player ? new Date(toon?.player?.last_login_timestamp)?.toLocaleDateString() : "---" } </td>
