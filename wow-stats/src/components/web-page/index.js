@@ -1,11 +1,27 @@
+/*. 
+  Dev Notes: 
+  
+  Async funcs render at their own speed. Imagine main program flow continueing 
+  while Async branches off, then reconnects once finished execution.
+
+  Await pauses execution until the promise made by the branched off Async is resolved.
+*/
+
 import { useState, useEffect } from "react";
 import styles from "./web-page.module.css";
 import { wowClassInfo, wowServerList, guildTableSortingOptions } from "../api/wow-info";
 
 const WebPage = () => {
-  const clientId = "c356c5e8c3ec4573b82f631a5da7c9cc";
-  const clientSecret = "H0TBuu0X45pmU9Gz4tIZAhmTMeMGSmEI";
-  const [accessToken, setAccessToken] = useState(""); // access token retrieved from client & secret that allows us to call APIs
+  const wowClientId = "c356c5e8c3ec4573b82f631a5da7c9cc";
+  const wowClientSecret = "H0TBuu0X45pmU9Gz4tIZAhmTMeMGSmEI";
+  const [wowAccessToken, setWowAccessToken] = useState(""); // access token retrieved from client & secret that allows us to call APIs
+
+  const logClientId = "a00b716e-06ba-46e0-ab09-c0c5fb523413";
+  const logClientSecret = "zblbGQOJ7q5Qw4Q1q6jdtpkFGydZlQYBgD4rFwwq";
+  const [logAccessToken, setLogAccessToken] = useState("");
+
+  const logAuthApi = "https://classic.warcraftlogs.com/oauth/token"
+  const wowAuthApi = "https://us.battle.net/oauth/token"
 
   const [guildName, setGuildName] = useState(""); // user input guild name
   const formattedGuildName = guildName?.replaceAll(" ", "-")?.toLowerCase(); // format guild name for api calls
@@ -17,9 +33,9 @@ const WebPage = () => {
 
   // using clientID and clientSecret get access token -key card to blizzard API-
   useEffect(() => {
-    async function getAccessToken() { // wont pause app renders while processing
+    async function getAccessToken(clientId, clientSecret, api, setAccessToken) { // wont pause app renders while processing
       try {
-        const res = await fetch("https://us.battle.net/oauth/token", {
+        const res = await fetch(api, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -36,21 +52,27 @@ const WebPage = () => {
       }
     }
 
-    getAccessToken();
+    getAccessToken(wowClientId, wowClientSecret, wowAuthApi, setWowAccessToken);
+    getAccessToken(logClientId, logClientSecret, logAuthApi, setLogAccessToken);
   }, []); // empty dependency array so it only runs once on load
 
   // using access token fetch guild data from blizzard API
   async function fetchGuildData(server, guild, namespace, locale) {
     try {
       const res = await fetch(`https://us.api.blizzard.com/data/wow/guild/${server}/${guild}/roster?namespace=${namespace}&locale=${locale}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: { Authorization: `Bearer ${wowAccessToken}` },
       }); // api call to get guild data
 
       const data = await res.json(); // pauses execution inside func while we get the guild data in json form
       setGuildDataTable(data); // once promise resolved set guild data
 
-      // call player api with list of guild members -data.members- to fetch player data and concat with guild data
-      fetchAllPlayers(server, data.members, namespace, locale); 
+      // call both api's with list of guild members -data.members- to fetch player data and parses to concat with guild data
+      setGuildDataTable({ ...data, members: 
+        await fetchPlayerParseData(server,
+          await fetchAllPlayers(server, data.members, namespace, locale),
+        "US"),
+      });
+
 
     } catch (error) {
       console.error("Error Fetching Guild Data From Blizzard API:", error);
@@ -64,27 +86,83 @@ const WebPage = () => {
     try {
       const requests = members.map((member) =>
         fetch(`https://us.api.blizzard.com/profile/wow/character/${server}/${member?.character?.name?.toLowerCase()}?namespace=${namespace}&locale=${locale}`,
-          { headers: { Authorization: `Bearer ${accessToken}` } }
+          { headers: { Authorization: `Bearer ${wowAccessToken}` } }
         )
           .then((res) => res.ok ? res.json() : null) // each fetch returns a promise of a member's data or null on 404
           .catch(() => null)
       ); // map over members to create array of fetch promises
 
       const results = await Promise.all(requests); // resolve all promises to get array of player data / nulls
-      console.log("Player Data Results:", results);
 
       const merged = members.map((member, index) => ({ // loop through each guild-member fetched from fetchGuildData API
         ...member,
         player: results[index], // adds new property "player" to merged with player data retrieved from API
-      })); // 
+      }));
 
-      setGuildDataTable((prev) => ({ ...prev, members: merged })); // replaces or adds members property guildDataTable
+      // setGuildDataTable((prev) => ({ ...prev, members: merged }));
+      return merged; // replaces or adds members property guildDataTable
     } catch (error) {
       console.error("Error Fetching Player Data:", error);
     }
   }
 
-  // {console.log(guildDataTable)}
+  async function getLoggedPlayerId(token, name, serverSlug, region) {
+    const query = `
+      {
+        characterData {
+          character(name: "${name}", serverSlug: "${serverSlug}", serverRegion: "${region}") {
+            id
+          }
+        }
+      }
+    `;
+    const res = await fetch("https://classic.warcraftlogs.com/api/v2/client", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query }),
+    });
+    const j = await res.json();
+    return j?.data?.characterData?.character?.id;
+  }
+
+  async function getParse(charId) {
+    const query = `
+      {
+        characterData {
+          character(id: ${charId}) {
+            name
+            zoneRankings(metric: dps)
+          }
+        }
+      }
+    `;
+    const res = await fetch("https://classic.warcraftlogs.com/api/v2/client", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${logAccessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query }),
+    });
+    const j = await res.json();
+    return j?.data?.characterData?.character?.zoneRankings?.bestPerformanceAverage;
+  }
+
+  async function fetchPlayerParseData(server, members, region) {
+
+    const finalDT = await Promise.all( members?.map(async (member, index) => {
+        const wlogsPlayerId = await getLoggedPlayerId(logAccessToken, member?.character.name, server, region);
+        const wlogsPlayerParse = await getParse(wlogsPlayerId);
+        return { ...member, playerId: wlogsPlayerId, parse: wlogsPlayerParse };
+      })
+    );
+
+    return finalDT;
+  }
+
   return (
     <div className={`${styles.fullPageSize} container`}>
       <div className={styles.dropdownContainer}>
@@ -181,7 +259,8 @@ const WebPage = () => {
                       href={`https://classic.warcraftlogs.com/character/us/${serverName}/${toon?.character?.name}`}
                       target="_blank" rel="noopener noreferrer" 
                     >
-                      LINK
+                      {toon?.parse ? 
+                        parseFloat(toon?.parse).toFixed(2) : "---"}
                     </a>
                   </td>
                   <td> { toon?.player ? new Date(toon?.player?.last_login_timestamp)?.toLocaleDateString() : "---" } </td>
