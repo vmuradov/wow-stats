@@ -1,6 +1,6 @@
 {
   "name": "wow-stats",
-  "homepage": "https://wow-stats.com",
+  "homepage": "https://vmuradov.github.io/wow-stats",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
