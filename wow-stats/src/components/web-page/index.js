@@ -239,8 +239,8 @@ const WebPage = () => {
                     <img 
                       alt="" 
                       src={
-                        wowClassInfo[toon?.character?.playable_class?.id]?.icon?.
-                          find(obj => obj[toon?.player?.active_spec?.name])?.[toon?.player?.active_spec?.name] // IF you find the key-val pair}
+                        wowClassInfo[toon?.character?.playable_class?.id]?.icon
+                        ?.find(obj => obj[toon?.player?.active_spec?.name])?.[toon?.player?.active_spec?.name] // IF you find the key-val pair}
                       }
                     />
                   </td>
