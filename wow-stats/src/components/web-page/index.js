@@ -238,9 +238,11 @@ const WebPage = () => {
                   <td>
                     <img 
                       alt=""
-                      src={
-                        wowClassInfo[toon?.character?.playable_class?.id]?.icon
-                          ?.find(obj => obj[toon?.player?.active_spec?.name])?.[toon?.player?.active_spec?.name] // IF you find the key-val pair}
+                      src={ toon?.player ?
+                        wowClassInfo[toon?.player?.character_class?.id]?.icon
+                          ?.find(obj => obj[toon?.player?.active_spec?.name])?.[toon?.player?.active_spec?.name] ||
+                           wowClassInfo[toon?.character?.playable_class?.id]?.defaultIcon : 
+                        wowClassInfo[toon?.character?.playable_class?.id]?.defaultIcon
                       }
                     />
                   </td>
@@ -259,7 +261,7 @@ const WebPage = () => {
                   <td> {toon?.player ? toon?.player?.equipped_item_level : "---"} </td>
                   <td>
                     {toon?.player?.active_spec?.name ?
-                      (wowClassInfo[toon?.character?.playable_class?.id]?.spec) // Look Throigh the wowClassInfo object
+                      (wowClassInfo[toon?.player?.character_class?.id]?.spec) // Look Throigh the wowClassInfo object
                         ?.find(obj => obj[toon?.player?.active_spec?.name]) // IF you find the key-val pair
                           ?.[toon?.player?.active_spec?.name]  // check if undefined ?. & access @ key
                         : "---"
@@ -271,7 +273,7 @@ const WebPage = () => {
                       target="_blank" rel="noopener noreferrer"
                     >
                       <span style={{color: "black"}}>
-                        {toon?.parse ?
+                        {toon?.parse?.bestPerformanceAverage ?
                           toon?.parse?.difficulty === 4 ? "Heroic" : 
                           toon?.parse?.difficulty === 3 ? "Normal" : 
                           "" : 
